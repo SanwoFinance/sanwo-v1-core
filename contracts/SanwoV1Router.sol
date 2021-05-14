@@ -7,8 +7,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import './interfaces/ISanwoV1Plugin.sol';
-import './libraries/Helper.sol';
-import './ISanwoV1Config.sol';
+import './libraries/SafeToken.sol';
+import './SanwoV1Config.sol';
 
 contract DePayRouterV1 {
   
@@ -76,7 +76,7 @@ contract DePayRouterV1 {
     if(tokenIn == ETH) { 
       require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
     } else {
-      Helper.safeTransferFrom(tokenIn, msg.sender, address(this), amountIn);
+      SafeToken.safeTransferFrom(tokenIn, msg.sender, address(this), amountIn);
     }
   }
 
@@ -142,9 +142,9 @@ contract DePayRouterV1 {
     uint amount
   ) external onlyOwner returns(bool) {
     if(token == ETH) {
-      Helper.safeTransferETH(payable(configuration.owner()), amount);
+      SafeToken.safeTransferETH(payable(configuration.owner()), amount);
     } else {
-      Helper.safeTransfer(token, payable(configuration.owner()), amount);
+      SafeToken.safeTransfer(token, payable(configuration.owner()), amount);
     }
     return true;
   }
