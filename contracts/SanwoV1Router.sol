@@ -3,17 +3,19 @@
 pragma solidity >=0.7.5 <0.8.0;
 pragma abicoder v2;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
+import "./libraries/openzeppelin/contracts/token/ERC20/IERC20.sol";
+import './libraries/openzeppelin/contracts/math/SafeMath.sol';
+import './libraries/openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 import './interfaces/ISanwoV1Plugin.sol';
 import './libraries/SafeToken.sol';
 import './SanwoV1Config.sol';
-
+import './interfaces/ISanwoV1Config.sol';
+import './interfaces/ISafeToken.sol';
 contract DePayRouterV1 {
   
   using SafeMath for uint;
   using SafeERC20 for IERC20;
+  ISafeToken SafeToken;
 
   // Address representating ETH (e.g. in payment routing paths)
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
@@ -72,11 +74,11 @@ contract DePayRouterV1 {
 
   // This makes sure that the sender has payed in the token (or ETH)
   // required to perform the payment.
-  function _ensureTransferIn(address tokenIn, uint amountIn) private {
+  function _ensureTransferIn(address tokenIn, uint amountIn) public {
     if(tokenIn == ETH) { 
       require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
     } else {
-      SafeToken.safeTransferFrom(tokenIn, msg.sender, address(this), amountIn);
+      SafeToken.SafeTransferFrom( IERC20(tokenIn), msg.sender, address(this), amountIn);
     }
   }
 
@@ -91,7 +93,7 @@ contract DePayRouterV1 {
     for (uint i = 0; i < plugins.length; i++) {
       require(_isApproved(plugins[i]), 'DePay: Plugin not approved!');
       
-      ISanwoV1Plugin plugin = ISanwoV1Plugin(configuration.approvedPlugins(plugins[i]));
+      ISanwoV1Config plugin = ISanwoV1Config(configuration.approvedPlugin(plugins[i]));
 
       if(plugin.delegate()) {
         (bool success, bytes memory returnData) = address(plugin).delegatecall(abi.encodeWithSelector(
