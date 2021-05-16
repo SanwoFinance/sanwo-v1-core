@@ -8,8 +8,9 @@ import './libraries/openzeppelin/contracts/math/SafeMath.sol';
 import './libraries/openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 import './interfaces/ISanwoV1Plugin.sol';
 import './libraries/SafeToken.sol';
-import './SanwoV1Config.sol';
+import './SanwoRouterV1Config.sol';
 import './interfaces/ISanwoV1Config.sol';
+import './interfaces/ISanwoRouterV1PLugin.sol';
 import './interfaces/ISafeToken.sol';
 contract DePayRouterV1 {
   
@@ -21,12 +22,12 @@ contract DePayRouterV1 {
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
   // Instance of ISanwoV1Config
-  ISanwoV1Config public immutable configuration;
+  SanwoRouterV1Config public immutable configuration;
 
   constructor (
     address _configuration
   ) public {
-    configuration = ISanwoV1Config(_configuration);
+    configuration = SanwoRouterV1Config(_configuration);
   }
 
   // Proxy modifier to ISanwoV1Config
@@ -93,7 +94,7 @@ contract DePayRouterV1 {
     for (uint i = 0; i < plugins.length; i++) {
       require(_isApproved(plugins[i]), 'DePay: Plugin not approved!');
       
-      ISanwoV1Config plugin = ISanwoV1Config(configuration.approvedPlugin(plugins[i]));
+      ISanwoRouterV1Plugin plugin = ISanwoRouterV1Plugin(configuration.approvePlugin(plugins[i]));
 
       if(plugin.delegate()) {
         (bool success, bytes memory returnData) = address(plugin).delegatecall(abi.encodeWithSelector(

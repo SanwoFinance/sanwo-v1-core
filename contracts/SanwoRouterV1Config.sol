@@ -7,7 +7,7 @@ import "./libraries/openzeppelin/contracts/access/Ownable.sol";
 
 // Prevents unwanted access to configuration in DePayRouterV1
 // Potentially occuring through delegatecall(ing) plugins.
-contract  SanwoV1Config is Ownable {
+contract  SanwoRouterV1Config is Ownable {
   
   // List of approved plugins. Use approvePlugin to add new plugins.
   mapping (address => address) public approvedPlugins;
