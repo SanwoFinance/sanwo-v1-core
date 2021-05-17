@@ -7,12 +7,12 @@ import "./libraries/openzeppelin/contracts/token/ERC20/IERC20.sol";
 import './libraries/openzeppelin/contracts/math/SafeMath.sol';
 import './libraries/openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 import './interfaces/ISanwoV1Plugin.sol';
-import './libraries/SafeToken.sol';
+import './libraries/SafeToken.sol'; 
 import './SanwoRouterV1Config.sol';
 import './interfaces/ISanwoV1Config.sol';
 import './interfaces/ISanwoRouterV1PLugin.sol';
 import './interfaces/ISafeToken.sol';
-contract DePayRouterV1 {
+contract SanwoRouterV1 {
   
   using SafeMath for uint;
   using SafeERC20 for IERC20;
@@ -75,9 +75,9 @@ contract DePayRouterV1 {
 
   // This makes sure that the sender has payed in the token (or ETH)
   // required to perform the payment.
-  function _ensureTransferIn(address tokenIn, uint amountIn) public {
+  function _ensureTransferIn(address tokenIn, uint amountIn) private {
     if(tokenIn == ETH) { 
-      require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
+      require(msg.value >= amountIn, 'Sanwo: Insufficient ETH amount payed in!'); 
     } else {
       SafeToken.SafeTransferFrom( IERC20(tokenIn), msg.sender, address(this), amountIn);
     }
@@ -92,9 +92,9 @@ contract DePayRouterV1 {
     string[] calldata data
   ) internal {
     for (uint i = 0; i < plugins.length; i++) {
-      require(_isApproved(plugins[i]), 'DePay: Plugin not approved!');
+      require(_isApproved(plugins[i]), 'Sanwo: Plugin not approved!');
       
-      ISanwoRouterV1Plugin plugin = ISanwoRouterV1Plugin(configuration.approvePlugins(plugins[i]));
+      ISanwoRouterV1Plugin plugin = ISanwoRouterV1Plugin(configuration.approvedPlugins(plugins[i]));
 
       if(plugin.delegate()) {
         (bool success, bytes memory returnData) = address(plugin).delegatecall(abi.encodeWithSelector(
@@ -113,7 +113,7 @@ contract DePayRouterV1 {
   // This makes sure that the balance after the payment not less than before.
   // Prevents draining of the contract.
   function _ensureBalance(address tokenOut, uint balanceBefore) private view {
-    require(_balance(tokenOut) >= balanceBefore, 'DePay: Insufficient balance after payment!');
+    require(_balance(tokenOut) >= balanceBefore, 'Sanwo: Insufficient balance after payment!');
   }
 
   // Returns the balance of the payment plugin contract for a token (or ETH).
@@ -147,7 +147,7 @@ contract DePayRouterV1 {
     if(token == ETH) {
       SafeToken.safeTransferETH(payable(configuration.owner()), amount);
     } else {
-      SafeToken.safeTransfer(token, payable(configuration.owner()), amount);
+      SafeToken.SafeTransfer(IERC20(token), payable(configuration.owner()), amount);
     }
     return true;
   }
