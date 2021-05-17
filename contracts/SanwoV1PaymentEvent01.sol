@@ -18,10 +18,9 @@ contract DePayRouterV1PaymentEvent01 {
   bool public immutable delegate = false;
 
   function execute(
-    address[] calldata path,
-    uint[] calldata amounts,
-    address[] calldata addresses,
-    string[] calldata data
+
+    address[] calldata addresses
+   
   ) external payable returns(bool) {
     emit Payment(addresses[0], payable(addresses[addresses.length-1]));
   }
