@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.5 <0.8.0;
+pragma solidity 0.8.1;
 pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import './libraries/SafeToken.sol';
 
-contract DePayRouterV1Payment01 {
+contract SanwoV1PaymentPlugin01 {
 
   // Address representating ETH (e.g. in payment routing paths)
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
@@ -27,9 +28,11 @@ contract DePayRouterV1Payment01 {
   ) external payable returns(bool) {
 
     if(path[path.length-1] == ETH) {
-      Helper.safeTransferETH(payable(addresses[addresses.length-1]), amounts[1]);
+      SafeToken.safeTransferETH(payable(addresses[addresses.length-1]), amounts[1]);
     } else {
-      Helper.safeTransfer(path[path.length-1], payable(addresses[addresses.length-1]), amounts[1]);
+      SafeERC20.safeTransfer(IERC20(path[path.length-1]), payable(addresses[addresses.length-1]), amounts[1]);
     }
+
+    return true;
   }
 }

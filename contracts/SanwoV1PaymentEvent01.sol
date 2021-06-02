@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.5 <0.8.0;
+pragma solidity 0.8.1;
 pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -23,6 +23,8 @@ contract DePayRouterV1PaymentEvent01 {
     address[] calldata addresses,
     string[] calldata data
   ) external payable returns(bool) {
+    (path, data, amounts);
     emit Payment(addresses[0], payable(addresses[addresses.length-1]));
+    return true;
   }
 }

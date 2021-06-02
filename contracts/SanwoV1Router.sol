@@ -1,30 +1,26 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.5 <0.8.0;
+pragma solidity 0.8.1;
 pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import './interfaces/ISanwoV1Plugin.sol';
 import './libraries/SafeToken.sol';
 import './SanwoV1Config.sol';
 
 contract DePayRouterV1 {
   
-  using SafeMath for uint;
-  using SafeERC20 for IERC20;
-
   // Address representating ETH (e.g. in payment routing paths)
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
   // Instance of ISanwoV1Config
-  ISanwoV1Config public immutable configuration;
+  SanwoV1Config public immutable configuration;
 
   constructor (
     address _configuration
-  ) public {
-    configuration = ISanwoV1Config(_configuration);
+  ) {
+    configuration = SanwoV1Config(_configuration);
   }
 
   // Proxy modifier to ISanwoV1Config
@@ -76,7 +72,7 @@ contract DePayRouterV1 {
     if(tokenIn == ETH) { 
       require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
     } else {
-      SafeToken.safeTransferFrom(tokenIn, msg.sender, address(this), amountIn);
+      SafeERC20.safeTransferFrom(IERC20(tokenIn), msg.sender, address(this), amountIn);
     }
   }
 
@@ -119,7 +115,7 @@ contract DePayRouterV1 {
         return address(this).balance;
     } else {
         return IERC20(token).balanceOf(address(this));
-    }
+      }
   }
 
   // Function to check if a plugin address is approved.
@@ -144,7 +140,7 @@ contract DePayRouterV1 {
     if(token == ETH) {
       SafeToken.safeTransferETH(payable(configuration.owner()), amount);
     } else {
-      SafeToken.safeTransfer(token, payable(configuration.owner()), amount);
+      SafeERC20.safeTransfer(IERC20(token), payable(configuration.owner()), amount);
     }
     return true;
   }
