@@ -7,7 +7,7 @@ import "./libraries/openzeppelin/contracts/token/ERC20/IERC20.sol";
 import './libraries/SafeToken.sol';
 import './interfaces/ISafeToken.sol';
 
-contract DePayRouterV1Payment01 {
+contract SanwoRouterV1Payment01 {
   
   // Address representating ETH (e.g. in payment routing paths)
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;

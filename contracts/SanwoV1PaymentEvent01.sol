@@ -6,7 +6,7 @@ pragma abicoder v2;
 import "./libraries/openzeppelin/contracts/token/ERC20/IERC20.sol";
 import './libraries/SafeToken.sol';
 
-contract DePayRouterV1PaymentEvent01 {
+contract SanwoRouterV1PaymentEvent01 {
 
   // The payment event.
   event Payment(
