@@ -29,7 +29,7 @@ contract  SanwoRouterV1Config is Ownable {
     approvedPlugins[plugin] = address(0);
     emit PluginDisapproved(plugin);
     return true;
-  }
+  } 
 
   // Event to emit disapproved plugin.
   event PluginDisapproved(
