@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./interfaces/I1InchAggregratorRouter.sol";
+import "./SanwoV1PaymentEvent01.sol";
 
 
 
@@ -15,8 +16,6 @@ contract OneInchPlugin{
   // decentralized exchanges, not to dyanmically called contracts!!!
   uint public immutable MAXINT = type(uint256).max;
   
-  // Address of WETH.
-  address public immutable WETH;
 
   // Address of 1Inch aggregrator router.
   address public immutable AggregationRouterV3;
@@ -24,23 +23,17 @@ contract OneInchPlugin{
   // Indicates that this plugin requires delegate call
   bool public immutable delegate = true;
 
-    event SanwoSwap(
-        address sender,
-        IERC20 srcToken,
-        IERC20 dstToken,
-        address dstReceiver,
-        uint256 spentAmount,
-        uint256 returnAmount
-    );
+  address paymenteventplugin;
+
 
 
   // Pass WETH and the UniswapRouter when deploying this contract.
   constructor (
-    address _WETH,
+      address _paymenteventplugin,
     address _AggregationRouterV3
   ) public {
-    WETH = _WETH;
      AggregationRouterV3 = _AggregationRouterV3;
+     paymenteventplugin = _paymenteventplugin;
   }
 
 
@@ -58,13 +51,9 @@ contract OneInchPlugin{
     }
 
      IAggregationRouterV3(AggregationRouterV3).swap(caller, desc, data);
-     emit SanwoSwap(
-            msg.sender,
-            desc.srcToken,
-            desc.dstToken,
-            desc.dstReceiver,
-            desc.spentAmount,
-            desc.returnAmount
-        );
+     address[] memory addresses;
+     addresses[0] = desc.srcReceiver;
+     addresses[1] = desc.dstReceiver;
+     SanwoRouterV1PaymentEvent01(paymenteventplugin).execute(addresses);
     }
 }

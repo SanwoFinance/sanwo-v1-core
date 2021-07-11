@@ -47,12 +47,14 @@ contract SanwoRouterV1 {
   function route(
         IAggregationExecutor caller,
         SwapDescription calldata desc,
+        address[] calldata plugins,
         bytes calldata data
   ) external payable returns(bool) {
     uint balanceBefore = _balanceBefore(desc.dstToken);
     _ensureTransferIn(desc.srcToken, desc.amount);
-    _execute(caller, desc, data);
+    _execute(caller, desc,plugins, data);
     _ensureBalance(desc.dstToken, balanceBefore);
+    
     return true;
   }
 
@@ -77,6 +79,7 @@ contract SanwoRouterV1 {
   function _execute(
         IAggregationExecutor caller,
         SwapDescription calldata desc,
+        address[] calldata plugins,
         bytes calldata data
   ) internal {
     for (uint i = 0; i < plugins.length; i++) {
