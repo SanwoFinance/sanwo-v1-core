@@ -12,6 +12,7 @@ import './SanwoRouterV1Config.sol';
 import './interfaces/ISanwoV1Config.sol';
 import './interfaces/ISanwoRouterV1PLugin.sol';
 import './interfaces/ISafeToken.sol';
+import "./interfaces/I1InchAggregratorRouter.sol";
 contract SanwoRouterV1 {
   
   using SafeMath for uint;
@@ -44,25 +45,14 @@ contract SanwoRouterV1 {
 
   // The main function to route transactions.
   function route(
-    // The path of the token conversion.
-    address[] calldata path,
-    // Amounts passed to proccessors:
-    // e.g. [amountIn, amountOut, deadline]
-    uint[] calldata amounts,
-    // Addresses passed to plugins:
-    // e.g. [receiver]
-    address[] calldata addresses,
-    // List and order of plugins to be executed for this payment:
-    // e.g. [Uniswap,paymentPlugin] to swap and pay
-    address[] calldata plugins,
-    // Data passed to plugins:
-    // e.g. ["signatureOfSmartContractFunction(address,uint)"] receiving the payment
-    string[] calldata data
+        IAggregationExecutor caller,
+        SwapDescription calldata desc,
+        bytes calldata data
   ) external payable returns(bool) {
-    uint balanceBefore = _balanceBefore(path[path.length-1]);
-    _ensureTransferIn(path[0], amounts[0]);
-    _execute(path, amounts, addresses, plugins, data);
-    _ensureBalance(path[path.length-1], balanceBefore);
+    uint balanceBefore = _balanceBefore(desc.dstToken);
+    _ensureTransferIn(desc.srcToken, desc.amount);
+    _execute(caller, desc, data);
+    _ensureBalance(desc.dstToken, balanceBefore);
     return true;
   }
 
@@ -85,11 +75,9 @@ contract SanwoRouterV1 {
 
   // Executes plugins in the given order.
   function _execute(
-    address[] calldata path,
-    uint[] calldata amounts,
-    address[] calldata addresses,
-    address[] calldata plugins,
-    string[] calldata data
+        IAggregationExecutor caller,
+        SwapDescription calldata desc,
+        bytes calldata data
   ) internal {
     for (uint i = 0; i < plugins.length; i++) {
       require(_isApproved(plugins[i]), 'Sanwo: Plugin not approved!');
@@ -98,12 +86,12 @@ contract SanwoRouterV1 {
 
       if(plugin.delegate()) {
         (bool success, bytes memory returnData) = address(plugin).delegatecall(abi.encodeWithSelector(
-            plugin.execute.selector, path, amounts, addresses, data
+            plugin.execute.selector, caller,desc,data
         ));
         require(success, string(returnData));
       } else {
         (bool success, bytes memory returnData) = address(plugin).call(abi.encodeWithSelector(
-            plugin.execute.selector, path, amounts, addresses, data
+            plugin.execute.selector,caller,desc,data
         ));
         require(success, string(returnData));
       }

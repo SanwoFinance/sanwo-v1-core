@@ -4,7 +4,7 @@ pragma solidity >=0.6.0 <0.8.0;
 
 import "../1inchAggregrator.sol";
 
-interface AggregationRouterV3  {
+interface IAggregationRouterV3  {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
     using UniERC20 for IERC20;
@@ -51,7 +51,7 @@ interface AggregationRouterV3  {
     )
         external
         payable
-        returns (uint256 returnAmount, uint256 gasLeft);
+        returns (uint256 returnAmount, uint256 gasLeft); 
 
     function rescueFunds(IERC20 token, uint256 amount) external;
 
