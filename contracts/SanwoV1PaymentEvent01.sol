@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 // This file has been copied and modified from the DePayV1 core 
 
-pragma solidity 0.8.1;
+pragma solidity 0.8.0;
 pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import './libraries/SafeToken.sol';
 
-contract DePayRouterV1PaymentEvent01 {
+contract SanwoRouterV1PaymentEvent01 {
 
   // The payment event.
   event Payment(

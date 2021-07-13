@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // This file has been copied and modified from the DePayV1 core repo
-pragma solidity 0.8.1;
+pragma solidity 0.8.0;
 pragma abicoder v2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";

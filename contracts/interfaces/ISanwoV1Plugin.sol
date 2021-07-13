@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.1;
+pragma solidity 0.8.0;
 pragma abicoder v2;
 
 interface ISanwoV1Plugin {

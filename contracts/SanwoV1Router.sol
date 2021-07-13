@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 // This file has been copied and modified from the DePayV1 core repo
-pragma solidity 0.8.1;
+pragma solidity 0.8.0;
 pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import './interfaces/ISanwoV1Plugin.sol';
 import './libraries/SafeToken.sol';
 import './SanwoV1Config.sol';
 
-contract DePayRouterV1 {
+contract SanwoRouterV1 {
   
   // Address representating ETH (e.g. in payment routing paths)
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
@@ -70,7 +70,7 @@ contract DePayRouterV1 {
   // required to perform the payment.
   function _ensureTransferIn(address tokenIn, uint amountIn) private {
     if(tokenIn == ETH) { 
-      require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
+      require(msg.value >= amountIn, 'Sanwo: Insufficient ETH amount payed in!'); 
     } else {
       SafeERC20.safeTransferFrom(IERC20(tokenIn), msg.sender, address(this), amountIn);
     }
@@ -85,7 +85,7 @@ contract DePayRouterV1 {
     string[] calldata data
   ) internal {
     for (uint i = 0; i < plugins.length; i++) {
-      require(_isApproved(plugins[i]), 'DePay: Plugin not approved!');
+      require(_isApproved(plugins[i]), 'Sanwo: Plugin not approved!');
       
       ISanwoV1Plugin plugin = ISanwoV1Plugin(configuration.approvedPlugins(plugins[i]));
 
@@ -106,7 +106,7 @@ contract DePayRouterV1 {
   // This makes sure that the balance after the payment not less than before.
   // Prevents draining of the contract.
   function _ensureBalance(address tokenOut, uint balanceBefore) private view {
-    require(_balance(tokenOut) >= balanceBefore, 'DePay: Insufficient balance after payment!');
+    require(_balance(tokenOut) >= balanceBefore, 'Sanwo: Insufficient balance after payment!');
   }
 
   // Returns the balance of the payment plugin contract for a token (or ETH).

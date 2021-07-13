@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/SanwoFinance/sanwo-v1-core#readme",
   "dependencies": {
-    "@openzeppelin/contracts": "^4.1.0"
+    "@openzeppelin/contracts": "^4.2.0"
   }
 }
