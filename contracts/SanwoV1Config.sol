@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
-
+// This file has been copied and modified from the DePayV1 core repo
 pragma solidity 0.8.1;
 pragma abicoder v2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-// Prevents unwanted access to configuration in DePayRouterV1
+// Prevents unwanted access to configuration in SanwoRouterV1
 // Potentially occuring through delegatecall(ing) plugins.
 contract SanwoV1Config is Ownable {
   
