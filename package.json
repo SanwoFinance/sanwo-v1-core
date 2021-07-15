@@ -21,5 +21,8 @@
   "homepage": "https://github.com/SanwoFinance/sanwo-v1-core#readme",
   "dependencies": {
     "@openzeppelin/contracts": "^4.2.0"
+  },
+  "devDependencies": {
+    "@openzeppelin/test-helpers": "^0.5.12"
   }
 }
