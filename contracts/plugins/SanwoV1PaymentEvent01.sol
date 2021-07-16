@@ -24,7 +24,6 @@ contract SanwoRouterV1PaymentEvent01 {
     address[] calldata addresses,
     string[] calldata data
   ) external payable returns(bool) {
-    (path, data, amounts);
     emit Payment(addresses[0], payable(addresses[addresses.length-1]));
     return true;
   }
