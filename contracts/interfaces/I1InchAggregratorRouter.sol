@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.6.0 <0.8.0;
-
-import "../1inchAggregrator.sol";
+pragma solidity >=0.6.0 <=0.8.0;
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import  '../libraries/UNIERC20.sol';
+import './IAggregationExecutor.sol';
 
 interface IAggregationRouterV3  {
     using SafeMath for uint256;

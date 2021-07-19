@@ -1,34 +1,28 @@
 // SPDX-License-Identifier: MIT
-
-pragma solidity >=0.7.5 <0.8.0;
+// This file has been copied and modified from the DePayV1 core repo
+pragma solidity 0.8.0;
 pragma abicoder v2;
 
-import "./libraries/openzeppelin/contracts/token/ERC20/IERC20.sol";
-import './libraries/openzeppelin/contracts/math/SafeMath.sol';
-import './libraries/openzeppelin/contracts/token/ERC20/SafeERC20.sol';
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import './interfaces/ISanwoV1Plugin.sol';
-import './libraries/SafeToken.sol'; 
-import './SanwoRouterV1Config.sol';
-import './interfaces/ISanwoV1Config.sol';
-import './interfaces/ISanwoRouterV1PLugin.sol';
-import './interfaces/ISafeToken.sol';
+import './libraries/SafeToken.sol';
+import './SanwoV1Config.sol';
 import "./interfaces/I1InchAggregratorRouter.sol";
+import './plugins/SanwoV1InchPlugin01.sol';
+
 contract SanwoRouterV1 {
   
-  using SafeMath for uint;
-  using SafeERC20 for IERC20;
-  ISafeToken SafeToken;
-
   // Address representating ETH (e.g. in payment routing paths)
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
   // Instance of ISanwoV1Config
-  SanwoRouterV1Config public immutable configuration;
+  SanwoV1Config public immutable configuration;
 
   constructor (
     address _configuration
-  ) public {
-    configuration = SanwoRouterV1Config(_configuration);
+  ) {
+    configuration = SanwoV1Config(_configuration);
   }
 
   // Proxy modifier to ISanwoV1Config
@@ -45,15 +39,15 @@ contract SanwoRouterV1 {
 
   // The main function to route transactions.
   function route(
-        IAggregationExecutor caller,
-        SwapDescription calldata desc,
-        address[] calldata plugins,
-        bytes calldata data
+    IAggregationExecutor caller,
+    SwapDescription calldata desc,
+    address[] calldata plugins,
+    bytes calldata data
   ) external payable returns(bool) {
-    uint balanceBefore = _balanceBefore(desc.dstToken);
-    _ensureTransferIn(desc.srcToken, desc.amount);
+    uint balanceBefore = _balanceBefore(address(desc.dstToken));
+    _ensureTransferIn(address(desc.srcToken), desc.amount);
     _execute(caller, desc,plugins, data);
-    _ensureBalance(desc.dstToken, balanceBefore);
+    _ensureBalance(address(desc.dstToken), balanceBefore);
     
     return true;
   }
@@ -71,7 +65,7 @@ contract SanwoRouterV1 {
     if(tokenIn == ETH) { 
       require(msg.value >= amountIn, 'Sanwo: Insufficient ETH amount payed in!'); 
     } else {
-      SafeToken.SafeTransferFrom( IERC20(tokenIn), msg.sender, address(this), amountIn);
+      SafeERC20.safeTransferFrom(IERC20(tokenIn), msg.sender, address(this), amountIn);
     }
   }
 
@@ -101,6 +95,7 @@ contract SanwoRouterV1 {
     }
   }
 
+
   // This makes sure that the balance after the payment not less than before.
   // Prevents draining of the contract.
   function _ensureBalance(address tokenOut, uint balanceBefore) private view {
@@ -113,7 +108,7 @@ contract SanwoRouterV1 {
         return address(this).balance;
     } else {
         return IERC20(token).balanceOf(address(this));
-    }
+      }
   }
 
   // Function to check if a plugin address is approved.
@@ -138,7 +133,7 @@ contract SanwoRouterV1 {
     if(token == ETH) {
       SafeToken.safeTransferETH(payable(configuration.owner()), amount);
     } else {
-      SafeToken.SafeTransfer(IERC20(token), payable(configuration.owner()), amount);
+      SafeERC20.safeTransfer(IERC20(token), payable(configuration.owner()), amount);
     }
     return true;
   }
