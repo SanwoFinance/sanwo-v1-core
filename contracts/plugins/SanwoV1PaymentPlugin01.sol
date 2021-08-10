@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import '../libraries/SafeToken.sol';
 
 contract SanwoV1PaymentPlugin01 {
+    using SafeERC20 for IERC20;
 
   // Address representating ETH (e.g. in payment routing paths)
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
@@ -31,7 +32,7 @@ contract SanwoV1PaymentPlugin01 {
     if(path[path.length-1] == ETH) {
       SafeToken.safeTransferETH(payable(addresses[addresses.length-1]), amounts[1]);
     } else {
-      SafeERC20.safeTransfer(IERC20(path[path.length-1]), payable(addresses[addresses.length-1]), amounts[1]);
+      IERC20(path[path.length-1]).safeTransfer(addresses[addresses.length-1], amounts[1]);
     }
 
     return true;

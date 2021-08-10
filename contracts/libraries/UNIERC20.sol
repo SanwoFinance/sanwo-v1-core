@@ -1,4 +1,4 @@
-pragma solidity >=0.6.0 <=0.8.0;
+pragma solidity >=0.6.0 <=0.9.0;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -7,7 +7,7 @@ library UniERC20 {
     using SafeMath for uint256;
 
     IERC20 private constant _ETH_ADDRESS = IERC20(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
-    IERC20 private constant _ZERO_ADDRESS = IERC20(0);
+    IERC20 private constant _ZERO_ADDRESS = IERC20(address(0));
 
     function isETH(IERC20 token) internal pure returns (bool) {
         return (token == _ZERO_ADDRESS || token == _ETH_ADDRESS);

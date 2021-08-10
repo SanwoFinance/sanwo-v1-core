@@ -12,7 +12,10 @@ contract SanwoRouterV1PaymentEvent01 {
   // The payment event.
   event Payment(
     address indexed sender,
-    address payable indexed receiver
+    address payable indexed receiver,
+    uint256 payedamount,
+    uint256 indexed receivedamount,
+    address[] tokensSwapped
   );
 
   // Indicates that this plugin does not require delegate call
@@ -20,11 +23,11 @@ contract SanwoRouterV1PaymentEvent01 {
 
   function execute(
     address[] calldata path,
-    uint[] calldata amounts,
-    address[] calldata addresses,
-    string[] calldata data
+    uint256[] calldata amounts,
+    address[] calldata addresses
+
   ) external payable returns(bool) {
-    emit Payment(addresses[0], payable(addresses[addresses.length-1]));
+    emit Payment(addresses[0], payable(addresses[addresses.length-1]),amounts[0], amounts[1],path);
     return true;
   }
 }
