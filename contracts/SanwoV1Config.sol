@@ -12,6 +12,16 @@ contract SanwoV1Config is Ownable {
   // List of approved plugins. Use approvePlugin to add new plugins.
   mapping (address => address) public approvedPlugins;
 
+    // Event to emit disapproved plugin.
+  event PluginDisapproved(
+    address indexed pluginAddress
+  );
+
+  // Event to emit newly approved plugin.
+  event PluginApproved(
+    address indexed pluginAddress
+  );
+
   // Approves the provided plugin.
   function approvePlugin(address plugin) external onlyOwner returns(bool) {
     approvedPlugins[plugin] = plugin;
@@ -19,20 +29,10 @@ contract SanwoV1Config is Ownable {
     return true;
   }
 
-  // Event to emit newly approved plugin.
-  event PluginApproved(
-    address indexed pluginAddress
-  );
-
   // Disapproves the provided plugin.
   function disapprovePlugin(address plugin) external onlyOwner returns(bool) {
     approvedPlugins[plugin] = address(0);
     emit PluginDisapproved(plugin);
     return true;
   }
-
-  // Event to emit disapproved plugin.
-  event PluginDisapproved(
-    address indexed pluginAddress
-  );
 }

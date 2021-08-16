@@ -45,6 +45,8 @@ contract("Test for Config and Router", function (addresses) {
       plugins = [paymentPlugin];
     });
 
-    xit("should revert with wrong payment", async () => {});
+    it("should revert when plugin unapproved", async () => {
+      await router.route()
+    });
   });
 });
